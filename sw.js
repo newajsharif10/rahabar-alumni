@@ -10,7 +10,7 @@
  * - Zero writeback simulation: Offline mutations are rejected, never falsely claiming success.
  */
 
-const CACHE_NAME = 'rahabar-alumni-shell-v1';
+const CACHE_NAME = 'rahabar-alumni-shell-v2-canonical';
 
 // Static assets to pre-cache on install
 const PRECACHE_ASSETS = [
@@ -43,7 +43,7 @@ self.addEventListener('activate', (event) => {
     caches.keys().then((cacheNames) => {
       return Promise.all(
         cacheNames
-          .filter((name) => name !== CACHE_NAME)
+          .filter((name) => name.startsWith('rahabar-alumni-shell-') && name !== CACHE_NAME)
           .map((name) => caches.delete(name))
       );
     }).then(() => self.clients.claim())
@@ -84,6 +84,9 @@ function isProtectedOrSensitive(request) {
 // Fetch Event: Network-first for navigation, Stale-while-revalidate for static assets
 self.addEventListener('fetch', (event) => {
   const request = event.request;
+  // Vite source modules must never be served from a development shell cache.
+  const requestUrl = new URL(request.url);
+  if (requestUrl.hostname === 'localhost' || requestUrl.hostname === '127.0.0.1') return;
 
   // 1. Strict Privacy & Security Check: Pass through directly without caching
   if (isProtectedOrSensitive(request)) {
