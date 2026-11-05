@@ -10,7 +10,7 @@
  * - Zero writeback simulation: Offline mutations are rejected, never falsely claiming success.
  */
 
-const CACHE_NAME = 'rahabar-alumni-shell-v2-canonical';
+const CACHE_NAME = 'rahabar-alumni-shell-v3';
 
 // Static assets to pre-cache on install
 const PRECACHE_ASSETS = [
